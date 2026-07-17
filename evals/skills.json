@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "typescript-type-design-required",
+      "skill": "typescript-type-design",
+      "query": "이 TypeScript API 응답 모델에서 loading, error, success 상태를 discriminated union으로 설계해줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "표현 가능한 잘못된 상태를 확인하고 runtime validation 경계를 보존한다."
+      ]
+    },
+    {
+      "id": "typescript-type-design-forbidden",
+      "skill": "typescript-type-design",
+      "query": "이 CSS grid 간격을 16px로 바꿔줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "타입 설계와 관계없는 스타일 변경에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "typescript-type-design-conditional",
+      "skill": "typescript-type-design",
+      "query": "이 React form state 타입을 정리해줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "상태 모델링이나 잘못된 상태 방지가 핵심일 때만 발동한다."
+      ]
+    },
+    {
+      "id": "frontend-testing-required",
+      "skill": "frontend-testing",
+      "query": "Testing Library로 로그인 폼의 실패와 성공 흐름 테스트를 작성하고 flaky 원인도 확인해줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "사용자 관점의 query와 async 동작을 사용해 필요한 최소 수준의 테스트를 작성한다."
+      ]
+    },
+    {
+      "id": "frontend-testing-forbidden",
+      "skill": "frontend-testing",
+      "query": "이 데이터베이스 migration SQL을 검토해줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "프런트엔드 테스트와 관계없는 요청에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "frontend-testing-conditional",
+      "skill": "frontend-testing",
+      "query": "버튼 component를 수정해줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "테스트 요청이 있거나 의미 있는 동작 변경을 검증해야 할 때만 발동한다."
+      ]
+    },
+    {
+      "id": "tanstack-query-required",
+      "skill": "tanstack-query",
+      "query": "TanStack Query v5 mutation 후 어떤 query key를 invalidate할지와 optimistic rollback을 설계해줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "사용 중인 버전과 query key를 확인하고 cache 일관성을 보존한다."
+      ]
+    },
+    {
+      "id": "tanstack-query-forbidden",
+      "skill": "tanstack-query",
+      "query": "modal 열림 상태를 Zustand로 관리해줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "server state가 아닌 client-only state 요청에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "tanstack-query-conditional",
+      "skill": "tanstack-query",
+      "query": "이 fetch hook의 cache 문제를 고쳐줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "프로젝트가 TanStack Query를 사용하거나 migration을 요청한 경우에만 발동한다."
+      ]
+    },
+    {
+      "id": "react-performance-required",
+      "skill": "react-performance",
+      "query": "Next.js 페이지의 순차 fetch waterfall과 커진 client bundle을 측정해서 개선해줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "측정 근거를 확인하고 관련 async 및 bundle 규칙만 적용한다."
+      ]
+    },
+    {
+      "id": "react-performance-forbidden",
+      "skill": "react-performance",
+      "query": "React component의 버튼 문구를 바꿔줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "성능과 관계없는 단순 문구 변경에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "react-performance-conditional",
+      "skill": "react-performance",
+      "query": "이 component를 refactor해줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "명시적이거나 측정된 성능 문제가 있을 때만 발동한다."
+      ]
+    },
+    {
+      "id": "pull-request-writing-required",
+      "skill": "pull-request-writing",
+      "query": "현재 branch의 변경으로 기존 PR 제목과 본문을 갱신해줘. 실제 실행한 검증만 적어줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "PR base와 remote head, 현재 본문을 확인하고 수동 작성 내용을 보존한다."
+      ]
+    },
+    {
+      "id": "pull-request-writing-forbidden",
+      "skill": "pull-request-writing",
+      "query": "현재 branch를 push만 해줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "PR 작성 요청이 없는 Git 작업에는 단독으로 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "pull-request-writing-conditional",
+      "skill": "pull-request-writing",
+      "query": "변경사항을 배포 준비해줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "PR 생성이나 갱신이 요청 범위에 포함된 경우에만 발동한다."
+      ]
+    }
+  ]
+}

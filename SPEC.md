@@ -1,6 +1,6 @@
 # coding-agent-harness Specification
 
-Status: Phase 2 Draft v1.1
+Status: Phase 2 Complete v1.1
 
 ## 1. 목적
 
@@ -31,6 +31,8 @@ coding-agent-harness/
 │     ├─ SKILL.md
 │     └─ agents/
 │        └─ openai.yaml
+├─ evals/
+│  └─ skills.json
 └─ vendor/
    └─ lock.json
 ```
@@ -83,12 +85,13 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - `react-performance` Skill과 Vercel React 규칙 revision 고정
 - `pull-request-writing` Skill
 - 표준 `SKILL.md` frontmatter와 Codex UI metadata 검증
+- Skill별 발동·비발동·경계 eval 사례
 
 ## 8. 현재 제외 범위
 
 - 설치·진단·업데이트·제거 CLI
 - 프로젝트 초기화 템플릿
 - 일반화된 vendor 갱신 도구
-- evals와 토큰 진단
+- 자동 eval runner와 토큰 진단
 - CI
 - 인증정보 관리

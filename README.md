@@ -13,9 +13,15 @@ coding-agent-harness/
 ├─ OPERATIONS.md
 ├─ instructions/
 │  └─ global.md
-└─ skills/
-   └─ <skill-name>/
-      └─ SKILL.md
+├─ skills/
+│  └─ <skill-name>/
+│     ├─ SKILL.md
+│     └─ agents/
+│        └─ openai.yaml
+├─ evals/
+│  └─ skills.json
+└─ vendor/
+   └─ lock.json
 ```
 
 `instructions/global.md`가 전역 지침 원본입니다. `skills/` 바로 아래에서 유효한 `SKILL.md`를 가진 디렉터리는 별도 설치 목록 없이 자동으로 발견됩니다.
@@ -87,4 +93,4 @@ git -C ~/Desktop/Projects/coding-agent-harness status --short --branch
 
 ## 범위
 
-Phase 2는 convention 기반 Skill 발견과 `typescript-type-design`, `frontend-testing`, `tanstack-query`, `react-performance`, `pull-request-writing`을 포함합니다. `react-performance`가 참조하는 Vercel 규칙은 `vendor/lock.json`의 revision으로 고정하며 `vendor/` 자체는 설치하지 않습니다. 프로젝트 템플릿, 진단 CLI, CI는 현재 범위에 포함하지 않습니다.
+Phase 2는 convention 기반 Skill 발견과 `typescript-type-design`, `frontend-testing`, `tanstack-query`, `react-performance`, `pull-request-writing`을 포함합니다. `evals/skills.json`은 자동 실행기가 아니라 Skill 선택 경계를 점검하는 최소 사례 모음입니다. `react-performance`가 참조하는 Vercel 규칙은 `vendor/lock.json`의 revision으로 고정하며 `vendor/` 자체는 설치하지 않습니다. 프로젝트 템플릿, 진단 CLI, CI는 현재 범위에 포함하지 않습니다.
