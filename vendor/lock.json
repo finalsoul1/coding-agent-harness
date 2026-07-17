@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "vercel-react-best-practices": {
+      "repository": "https://github.com/vercel-labs/agent-skills.git",
+      "path": "skills/react-best-practices",
+      "revision": "f8a72b9603728bb92a217a879b7e62e43ad76c81",
+      "license": "MIT",
+      "licenseSource": "skills/react-best-practices/SKILL.md"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "TypeScript 타입 설계"
+  short_description: "잘못된 상태를 줄이는 TypeScript 타입 설계"
+  default_prompt: "$typescript-type-design을 사용해 이 TypeScript 타입 모델을 검토하고 개선해줘."

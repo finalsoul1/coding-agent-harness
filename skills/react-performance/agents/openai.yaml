@@ -1,0 +1,4 @@
+interface:
+  display_name: "React 성능"
+  short_description: "React와 Next.js 성능 문제를 근거 중심으로 진단"
+  default_prompt: "$react-performance를 사용해 이 React 코드의 성능 문제를 진단하고 최소 변경으로 개선해줘."

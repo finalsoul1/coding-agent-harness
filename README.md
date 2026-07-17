@@ -11,16 +11,21 @@ coding-agent-harness/
 ├─ README.md
 ├─ SPEC.md
 ├─ OPERATIONS.md
-└─ instructions/
-   └─ global.md
+├─ instructions/
+│  └─ global.md
+└─ skills/
+   └─ <skill-name>/
+      └─ SKILL.md
 ```
 
-`instructions/global.md`가 유일한 지침 원본입니다.
+`instructions/global.md`가 전역 지침 원본입니다. `skills/` 바로 아래에서 유효한 `SKILL.md`를 가진 디렉터리는 별도 설치 목록 없이 자동으로 발견됩니다.
 
 | 에이전트 | 설치 경로 | 링크 대상 |
 | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` | `instructions/global.md` |
 | Codex | `~/.codex/AGENTS.md` | `instructions/global.md` |
+| Claude Code Skill | `~/.claude/skills/<name>` | `skills/<name>` |
+| Codex Skill | `~/.agents/skills/<name>` | `skills/<name>` |
 
 ## AI 에이전트에게 요청하기
 
@@ -66,6 +71,7 @@ AI 에이전트는 설치 후 다음 조건을 확인하고 실제 경로를 출
 - `~/.claude/CLAUDE.md`가 이 저장소의 `instructions/global.md`를 가리킨다.
 - `~/.codex/AGENTS.md`가 이 저장소의 `instructions/global.md`를 가리킨다.
 - 두 링크의 원본 파일을 읽을 수 있다.
+- 발견된 모든 Skill이 Claude Code와 Codex의 Skill 경로에 연결된다.
 - 저장소에 의도하지 않은 로컬 변경이 없다.
 
 직접 확인하려면 다음 명령을 사용할 수 있습니다.
@@ -73,6 +79,7 @@ AI 에이전트는 설치 후 다음 조건을 확인하고 실제 경로를 출
 ```sh
 readlink ~/.claude/CLAUDE.md
 readlink ~/.codex/AGENTS.md
+find skills -mindepth 2 -maxdepth 2 -name SKILL.md -print
 git -C ~/Desktop/Projects/coding-agent-harness status --short --branch
 ```
 
@@ -80,4 +87,4 @@ git -C ~/Desktop/Projects/coding-agent-harness status --short --branch
 
 ## 범위
 
-현재 저장소는 공통 지침과 안전한 운영 규칙만 관리합니다. Skills, vendor lock, 프로젝트 템플릿, 진단 CLI, CI는 현재 범위에 포함하지 않습니다.
+Phase 2는 convention 기반 Skill 발견과 `typescript-type-design`, `frontend-testing`, `tanstack-query`, `react-performance`, `pull-request-writing`을 포함합니다. `react-performance`가 참조하는 Vercel 규칙은 `vendor/lock.json`의 revision으로 고정하며 `vendor/` 자체는 설치하지 않습니다. 프로젝트 템플릿, 진단 CLI, CI는 현재 범위에 포함하지 않습니다.

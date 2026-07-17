@@ -1,0 +1,4 @@
+interface:
+  display_name: "TanStack Query"
+  short_description: "TanStack Query 서버 상태와 캐시 흐름 설계"
+  default_prompt: "$tanstack-query를 사용해 이 서버 상태와 캐시 흐름을 검토하고 개선해줘."

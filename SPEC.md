@@ -1,6 +1,6 @@
 # coding-agent-harness Specification
 
-Status: v1
+Status: Phase 2 Draft v1.1
 
 ## 1. 목적
 
@@ -8,7 +8,8 @@ Claude Code와 Codex에서 같은 개인용 개발 지침을 사용한다. 운�
 
 ## 2. 설계 원칙
 
-- `instructions/global.md`를 유일한 지침 원본으로 사용한다.
+- `instructions/global.md`를 전역 지침 원본으로 사용한다.
+- `skills/<name>/SKILL.md` 구조를 설치 대상 명세로 사용한다.
 - 설치, push, pull, 제거는 `OPERATIONS.md`의 규칙을 따른다.
 - 기존 사용자 파일은 사용자 자산으로 취급한다.
 - 충돌은 임의로 해결하지 않고 사용자에게 선택을 요청한다.
@@ -23,8 +24,15 @@ coding-agent-harness/
 ├─ README.md
 ├─ SPEC.md
 ├─ OPERATIONS.md
-└─ instructions/
-   └─ global.md
+├─ instructions/
+│  └─ global.md
+├─ skills/
+│  └─ <skill-name>/
+│     ├─ SKILL.md
+│     └─ agents/
+│        └─ openai.yaml
+└─ vendor/
+   └─ lock.json
 ```
 
 ## 4. 설치 대상
@@ -33,8 +41,12 @@ coding-agent-harness/
 | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` | `<repo>/instructions/global.md` |
 | Codex | `~/.codex/AGENTS.md` | `<repo>/instructions/global.md` |
+| Claude Code Skill | `~/.claude/skills/<name>` | `<repo>/skills/<name>` |
+| Codex Skill | `~/.agents/skills/<name>` | `<repo>/skills/<name>` |
 
 `<repo>`는 AI 에이전트가 현재 저장소의 절대 경로로 확인한다. 사용자 이름이나 고정된 홈 경로를 문서 또는 원본 지침에 기록하지 않는다.
+
+Skill은 `skills/`의 바로 아래 디렉터리 중 안전한 이름과 읽을 수 있는 `SKILL.md`를 가진 항목만 자동 발견한다. 설치 목록이나 agent별 중복 원본은 만들지 않는다.
 
 ## 5. 운영 계약
 
@@ -50,7 +62,8 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 
 ## 6. 완료 조건
 
-- 두 사용자 경로가 같은 `instructions/global.md`를 가리킨다.
+- 두 전역 지침 경로가 같은 `instructions/global.md`를 가리킨다.
+- 발견된 Skill이 Claude Code와 Codex의 Skill 경로에 같은 이름으로 연결된다.
 - 반복 설치해도 추가 변경이나 백업이 생기지 않는다.
 - 다른 파일이나 링크가 있으면 사용자 선택 전에는 변경하지 않는다.
 - 백업 이름이 충돌하지 않고 원본 내용이 보존된다.
@@ -59,11 +72,23 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - 제거는 현재 저장소가 소유한 링크만 삭제한다.
 - 사용자 파일, 백업, 저장소 원본은 제거되지 않는다.
 
-## 7. 현재 제외 범위
+## 7. Phase 2
+
+첫 구현 단위는 다음을 포함한다.
+
+- convention 기반 Skill 발견과 설치 규칙
+- `typescript-type-design` Skill
+- `frontend-testing` Skill
+- `tanstack-query` Skill
+- `react-performance` Skill과 Vercel React 규칙 revision 고정
+- `pull-request-writing` Skill
+- 표준 `SKILL.md` frontmatter와 Codex UI metadata 검증
+
+## 8. 현재 제외 범위
 
 - 설치·진단·업데이트·제거 CLI
 - 프로젝트 초기화 템플릿
-- Skills와 vendor 관리
+- 일반화된 vendor 갱신 도구
 - evals와 토큰 진단
 - CI
 - 인증정보 관리
