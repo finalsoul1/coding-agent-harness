@@ -1,10 +1,5 @@
 .DS_Store
 
-# Local runtime and test artifacts
-.tmp/
-coverage/
-*.log
-
 # Local environment and credentials
 .env
 .env.*
