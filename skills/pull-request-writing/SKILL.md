@@ -54,11 +54,23 @@ Template이 없으면 다음 항목에서 필요한 것만 선택한다.
 - bug fix에는 증상과 root cause, 해결 방식의 관계를 포함한다.
 - 동작이나 interface가 바뀌면 호환성, migration, rollback 주의를 필요한 만큼 포함한다.
 - UI 변경은 가능하면 같은 viewport의 Before/After와 관찰할 차이를 포함한다.
-- 변경 파일이 많거나 검토 순서가 중요하면 reviewer가 먼저 볼 위치를 안내한다.
 - 관련 issue가 확인되면 실제 reference와 `Closes` 같은 의도된 keyword만 사용한다.
 - 검증하지 못한 경우 `미실행`과 이유를 명시한다.
 
 작은 PR에는 짧은 문단과 검증 항목만으로 충분하다. 빈 section, 의미 없는 checkbox, diff의 파일 목록 복사, 개발 과정의 시간순 기록은 넣지 않는다.
+
+## 큰 PR의 Explain Diff
+
+변경이 여러 기능 그룹이나 layer에 걸치거나 review 순서가 이해에 도움이 되면 Explain Diff를 추가한다. 파일 수나 line 수만으로 큰 PR을 판단하지 않는다.
+
+- 변경을 파일이 아니라 목적과 동작 단위로 묶는다.
+- reviewer가 볼 순서와 그 순서가 필요한 이유를 안내한다.
+- 사용자 동작, data flow, control flow의 핵심 Before → After를 설명한다.
+- interface, migration, 호환성, rollback과 검증 공백 중 실제 위험만 표시한다.
+- generated, vendor, lockfile과 반복적인 기계 변경은 의미 있는 영향만 요약한다.
+- 모든 설명을 merge-base diff와 확인된 근거에 연결하고 보이지 않는 의도를 추측하지 않는다.
+
+`리뷰 가이드`, `핵심 변경 흐름`, `주의할 부분` 중 필요한 heading만 사용한다. 작은 PR이나 한 흐름으로 충분히 설명되는 PR에는 Explain Diff를 넣지 않는다.
 
 ## 생성과 갱신
 

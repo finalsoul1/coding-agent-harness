@@ -112,10 +112,11 @@
     {
       "id": "pull-request-writing-required",
       "skill": "pull-request-writing",
-      "query": "현재 branch의 변경으로 기존 PR 제목과 본문을 갱신해줘. 실제 실행한 검증만 적어줘.",
+      "query": "현재 branch에서 API, migration, UI가 함께 바뀐 큰 PR의 제목과 본문을 갱신해줘. 실제 실행한 검증만 적어줘.",
       "expectedActivation": "required",
       "expectedBehavior": [
-        "PR base와 remote head, 현재 본문을 확인하고 수동 작성 내용을 보존한다."
+        "PR base와 remote head, 현재 본문을 확인하고 수동 작성 내용을 보존한다.",
+        "변경을 목적별로 묶고 review 순서, 핵심 Before와 After, 실제 위험을 설명하며 기계적 변경은 축약한다."
       ]
     },
     {
