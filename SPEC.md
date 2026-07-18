@@ -1,6 +1,6 @@
 # coding-agent-harness Specification
 
-Status: Phase 2 Complete v1.1
+Status: Phase 2 Complete v1.2
 
 ## 1. 목적
 
@@ -15,6 +15,8 @@ Claude Code와 Codex에서 같은 개인용 개발 지침을 사용한다. 운�
 - 충돌은 임의로 해결하지 않고 사용자에게 선택을 요청한다.
 - 백업은 명시적인 선택이 있을 때만 만들며 자동 삭제하지 않는다.
 - Git의 기존 기능을 감싸는 별도 CLI를 만들지 않는다.
+- `ADDONS.md`에는 선택형 add-on의 이름, 설명과 공식 source만 기록한다.
+- 최초 설치 때 add-on 목록을 보여주고 선택된 항목의 최신 설치법은 공식 source에서 확인한다.
 - 결과는 명령 실행 여부가 아니라 확인된 최종 상태로 판단한다.
 
 ## 3. 저장소 구조
@@ -24,6 +26,7 @@ coding-agent-harness/
 ├─ README.md
 ├─ SPEC.md
 ├─ OPERATIONS.md
+├─ ADDONS.md
 ├─ instructions/
 │  └─ global.md
 ├─ skills/
@@ -50,6 +53,8 @@ coding-agent-harness/
 
 Skill은 `skills/`의 바로 아래 디렉터리 중 안전한 이름과 읽을 수 있는 `SKILL.md`를 가진 항목만 자동 발견한다. 설치 목록이나 agent별 중복 원본은 만들지 않는다.
 
+Add-on은 설치 대상이 아니라 `ADDONS.md`의 선택 목록으로 관리한다. 이 저장소는 add-on별 설치법이나 원본 파일을 복제하지 않는다.
+
 ## 5. 운영 계약
 
 설치, push, pull, 제거, 충돌, 백업의 상세 조건과 중단 기준은 [OPERATIONS.md](./OPERATIONS.md)를 단일 운영 계약으로 사용한다.
@@ -73,10 +78,13 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - push는 사용자가 요청한 변경만 포함하며 force push를 사용하지 않는다.
 - 제거는 현재 저장소가 소유한 링크만 삭제한다.
 - 사용자 파일, 백업, 저장소 원본은 제거되지 않는다.
+- 최초 설치에서 add-on 목록과 설명을 보여주고 함께 설치할 항목을 묻는다.
+- 선택하지 않은 add-on은 변경하지 않는다.
+- add-on 작업은 기존 전역 지침과 Skill 링크를 변경하지 않는다.
 
-## 7. Phase 2
+## 7. 현재 구현 범위
 
-첫 구현 단위는 다음을 포함한다.
+현재 구현은 다음을 포함한다.
 
 - convention 기반 Skill 발견과 설치 규칙
 - `typescript-type-design` Skill
@@ -86,12 +94,20 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - `pull-request-writing` Skill
 - 표준 `SKILL.md` frontmatter와 Codex UI metadata 검증
 - Skill별 발동·비발동·경계 eval 사례
+- 선택형 add-on 목록과 최초 설치 선택 규칙
 
-## 8. 현재 제외 범위
+## 8. 선택형 Add-on
+
+Add-on은 여러 Skill과 에이전트별 설정을 함께 제공할 수 있는 외부 패키지다. `ADDONS.md`에는 사용자가 선택에 필요한 이름, 한 줄 설명과 공식 source만 기록한다.
+
+최초 설치에서는 이 목록을 보여주고 함께 설치할 항목을 묻는다. 선택된 add-on은 공식 source의 현재 설치 문서를 확인해 처리하며 반복 설치, pull, 제거에는 자동으로 포함하지 않는다.
+
+## 9. 현재 제외 범위
 
 - 설치·진단·업데이트·제거 CLI
 - 프로젝트 초기화 템플릿
 - 일반화된 vendor 갱신 도구
 - 자동 eval runner와 토큰 진단
+- add-on 원본 vendoring과 설치법 복제
 - CI
 - 인증정보 관리
