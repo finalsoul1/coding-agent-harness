@@ -92,6 +92,18 @@ find skills -mindepth 2 -maxdepth 2 -name SKILL.md -print
 git -C ~/Desktop/Projects/coding-agent-harness status --short --branch
 ```
 
+## 권장 설정 (설치 대상 아님)
+
+이 저장소는 에이전트 설정 파일을 소유하지 않습니다. 아래는 사용자가 직접 적용하는 선택 항목입니다.
+
+| 에이전트 | 설정 | 값 | 이유 |
+| --- | --- | --- | --- |
+| Claude Code | `~/.claude/settings.json`의 `outputStyle` | `Concise` | 결론부터, 서론·재요약 없이 답하게 합니다. `instructions/global.md`의 분량 규칙과 같은 방향이며 충돌하지 않습니다. |
+
+`/config outputStyle=Concise`로도 설정할 수 있고, 이때 Claude Code가 프로젝트의 `.claude/settings.local.json`에 기록합니다. 전역으로 두려면 `~/.claude/settings.json`에 직접 적습니다. 자세한 내용은 [Output styles](https://code.claude.com/docs/en/output-styles) 문서를 참고합니다.
+
+Codex에는 대응 기능이 없으므로 분량 규칙은 `instructions/global.md`가 단독으로 담당합니다. 이 설정이 없어도 지침은 그대로 동작합니다.
+
 공통 지침은 이미 열린 대화에 소급 적용되지 않을 수 있습니다. 설치 후 새 Codex 작업 또는 Claude Code 세션에서 확인합니다.
 
 ## 범위
