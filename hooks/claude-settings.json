@@ -1,0 +1,82 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/worktree-base-refresh.sh\"",
+            "timeout": 60,
+            "statusMessage": "base 원격 ref 최신화 중 (fetch)..."
+          }
+        ]
+      },
+      {
+        "matcher": "EnterWorktree",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/worktree-base-refresh.sh\"",
+            "timeout": 60,
+            "statusMessage": "base 원격 ref 최신화 중 (fetch)..."
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/korean-writing-guard.py\"",
+            "timeout": 10,
+            "statusMessage": "korean-writing 점검 확인"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/comment-guard.sh\"",
+            "timeout": 15,
+            "statusMessage": "주석 재검토 확인"
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/memory-index-size.sh\"",
+            "timeout": 10,
+            "statusMessage": "메모리 인덱스 크기 확인"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/korean-writing-guard.py\"",
+            "timeout": 10,
+            "statusMessage": "korean-writing 답변 점검 확인"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/korean-writing-guard.py\"",
+            "timeout": 10,
+            "statusMessage": "korean-writing 알림"
+          }
+        ]
+      }
+    ]
+  }
+}

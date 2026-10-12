@@ -1,0 +1,4 @@
+interface:
+  display_name: "한국어 문장 다듬기"
+  short_description: "번역투와 뜻이 빈 표현을 고쳐 한국어 글을 읽기 쉽게 다듬기"
+  default_prompt: "$korean-writing을 사용해 이 한국어 글을 읽기 쉽게 다듬어줘."

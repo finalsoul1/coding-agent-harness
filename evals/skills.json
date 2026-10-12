@@ -136,6 +136,35 @@
       "expectedBehavior": [
         "PR 생성이나 갱신이 요청 범위에 포함된 경우에만 발동한다."
       ]
+    },
+    {
+      "id": "korean-writing-required",
+      "skill": "korean-writing",
+      "query": "이 공지 초안 문장이 어색하고 AI가 쓴 티가 나는데 읽기 좋게 다듬어줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "§4의 내용 문제를 먼저 보고 §3 구조, §1·§2 표현 순으로 고친다.",
+        "수치·고유명사·직접 인용은 바꾸지 않고, 걸린 표현이라도 바꿔 넣어 뜻이 같을 때만 고친다."
+      ]
+    },
+    {
+      "id": "korean-writing-forbidden",
+      "skill": "korean-writing",
+      "query": "Polish this English README so it reads more naturally.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "영어 문서에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "korean-writing-conditional",
+      "skill": "korean-writing",
+      "query": "이 함수에 주석 좀 달아줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "주석을 한국어로 쓸 때만 발동하고, 이미 이 컨텍스트에 불러왔으면 다시 부르지 않는다.",
+        "캐시·훅 같은 개발 용어는 우리말로 풀지 않는다."
+      ]
     }
   ]
 }
