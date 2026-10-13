@@ -140,4 +140,4 @@ Codex에는 대응 기능이 없으므로 분량 규칙은 `instructions/global.
 
 ## 범위
 
-Phase 2는 convention 기반 Skill 발견과 `typescript-type-design`, `frontend-testing`, `tanstack-query`, `react-performance`, `pull-request-writing`을 포함합니다. Phase 3은 `korean-writing` Skill과 Claude Code hook 설치를 더합니다. `evals/skills.json`은 자동 실행기가 아니라 Skill 선택 경계를 점검하는 최소 사례 모음입니다. `react-performance`가 참조하는 Vercel 규칙은 `vendor/lock.json`의 revision으로 고정하며 `vendor/` 자체는 설치하지 않습니다. `ADDONS.md`는 최초 설치 때 선택을 돕는 목록이며 add-on 설치법은 공식 source를 따릅니다. 프로젝트 템플릿, 진단 CLI, CI는 현재 범위에 포함하지 않습니다.
+Phase 2는 convention 기반 Skill 발견과 `typescript-type-design`, `frontend-testing`, `tanstack-query`, `react-performance`, `pull-request-writing`을 포함합니다. Phase 3은 `korean-writing`, `technical-concept-deep-dive` Skill과 Claude Code hook 설치를 더합니다. `evals/skills.json`은 자동 실행기가 아니라 Skill 선택 경계를 점검하는 최소 사례 모음입니다. `react-performance`가 참조하는 Vercel 규칙은 `vendor/lock.json`의 revision으로 고정하며 `vendor/` 자체는 설치하지 않습니다. `ADDONS.md`는 최초 설치 때 선택을 돕는 목록이며 add-on 설치법은 공식 source를 따릅니다. 프로젝트 템플릿, 진단 CLI, CI는 현재 범위에 포함하지 않습니다.

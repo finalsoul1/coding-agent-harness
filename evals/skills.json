@@ -165,6 +165,34 @@
         "주석을 한국어로 쓸 때만 발동하고, 이미 이 컨텍스트에 불러왔으면 다시 부르지 않는다.",
         "캐시·훅 같은 개발 용어는 우리말로 풀지 않는다."
       ]
+    },
+    {
+      "id": "technical-concept-deep-dive-required",
+      "skill": "technical-concept-deep-dive",
+      "query": "KEDA?",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "짧은 질문이어도 되묻지 않고 실용적인 멘탈 모델부터 설명한다.",
+        "최종 한국어 문장은 korean-writing으로 점검한다."
+      ]
+    },
+    {
+      "id": "technical-concept-deep-dive-forbidden",
+      "skill": "technical-concept-deep-dive",
+      "query": "이 컴포넌트의 useEffect 의존성 배열 버그를 고쳐줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "개념 설명이 아닌 코드 수정 요청에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "technical-concept-deep-dive-conditional",
+      "skill": "technical-concept-deep-dive",
+      "query": "우리 서비스에 RAG를 붙이면 뭐가 좋아져?",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "사용자가 RAG 개념을 모르는 상태일 때만 발동하고, 도입 판단이 중심이면 그 질문에 먼저 답한다."
+      ]
     }
   ]
 }
