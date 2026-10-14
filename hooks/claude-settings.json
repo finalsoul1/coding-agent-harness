@@ -33,6 +33,17 @@
             "statusMessage": "korean-writing 점검 확인"
           }
         ]
+      },
+      {
+        "matcher": "Bash|mcp__gitlab__create_merge_request|mcp__github__create_pull_request",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/mr-review-gate.sh\"",
+            "timeout": 10,
+            "statusMessage": "MR 전 리뷰 확인"
+          }
+        ]
       }
     ],
     "PostToolUse": [

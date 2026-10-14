@@ -51,6 +51,7 @@ Codex에는 대응하는 hook 기능이 없어 Skill과 전역 지침만 연결�
 | `comment-guard.sh` | PostToolUse(Edit\|Write) | JS/TS 편집이 새로 추가한 주석을 찾아 「왜만 남긴다」 규칙으로 재검토하게 한다. |
 | `memory-index-size.sh` | PostToolUse(Edit\|Write) | `~/.agent-memory/MEMORY.md` 항목이 150개를 넘으면 인덱스 계층화를 안내한다([MEMORY.md](./MEMORY.md)). |
 | `worktree-base-refresh.sh` | PreToolUse(Bash · EnterWorktree) | 워크트리를 만들기 직전에 `origin/<base>`를 fetch한다. base는 `CLAUDE_BASE_BRANCH`, `git config claude.baseBranch`, `origin/HEAD` 순으로 정한다. |
+| `mr-review-gate.sh` | PreToolUse(Bash · GitLab/GitHub MR·PR 생성 MCP) | `glab mr create`·`gh pr create`나 MR/PR 생성 MCP 호출 전에 리뷰 서브에이전트를 거치게 한다. 통과 기록은 `<git-dir>/agent-review/<branch>`에 브랜치 단위로 남긴다. 저장소에 `.claude/skills/code-review`가 있으면 그 기준으로 리뷰한다. |
 | `submodule-init.sh` | SessionStart (선택) | 새 워크트리에서 비어 있는 서브모듈을 받는다. |
 
 `submodule-init.sh`는 세션을 시작할 때마다 네트워크로 서브모듈을 받으므로 `claude-settings.json`에 넣지 않았습니다. 쓰려면 직접 등록합니다.
