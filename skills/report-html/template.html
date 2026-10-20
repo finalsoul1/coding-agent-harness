@@ -444,9 +444,10 @@
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     e.preventDefault();
     const step = (e.shiftKey ? 40 : 10) * (e.key === 'ArrowRight' ? 1 : -1);
-    chosen = clamp(current() + step);
-    apply(chosen);
-    save(chosen);
+    const before = current();
+    const next = clamp(before + step);
+    apply(next);
+    if (next !== before) { chosen = next; save(next); }
   });
 })();
 </script>
