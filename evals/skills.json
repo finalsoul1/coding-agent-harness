@@ -193,6 +193,33 @@
       "expectedBehavior": [
         "사용자가 RAG 개념을 모르는 상태일 때만 발동하고, 도입 판단이 중심이면 그 질문에 먼저 답한다."
       ]
+    },
+    {
+      "id": "report-html-required",
+      "skill": "report-html",
+      "query": "이번 배포 자동화 결과를 보고서 양식대로 HTML 문서로 만들어줘.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "template.html을 복사해 제목, 메타, 섹션만 채우고 스타일과 스크립트는 바꾸지 않는다."
+      ]
+    },
+    {
+      "id": "report-html-forbidden",
+      "skill": "report-html",
+      "query": "팀장님께 보낼 슬랙 보고 문구 짧게 써줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "텍스트로 붙여 넣는 보고 문구에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "report-html-conditional",
+      "skill": "report-html",
+      "query": "이번 장애 조사 결과를 보고서로 정리해줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "결과물을 HTML 문서로 남기는 경우에만 발동하고, 슬랙이나 이슈 본문으로 낼 때는 내용 규칙만 따른다."
+      ]
     }
   ]
 }

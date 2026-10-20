@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주간 배포 자동화 도입 결과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf8f3;
+    --panel: #f3eee6;
+    --fg: #26221f;
+    --muted: #6b635c;
+    --accent: #c4306f;
+    --line: rgba(38, 34, 31, 0.4);
+    --sidebar-w: 280px;
+    --measure: 720px;
+    --wide: 1200px;
+    --mono: "IBM Plex Mono", "IBM Plex Sans KR", ui-monospace, monospace;
+    --sans: "IBM Plex Sans KR", -apple-system, "Apple SD Gothic Neo", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 17px/1.8 var(--sans);
+    word-break: keep-all;
+  }
+  a { color: var(--accent); }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--sidebar-w);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px dashed var(--line);
+    font-family: var(--mono);
+  }
+  .sidebar-head {
+    padding: 28px 28px 24px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .sidebar-head .kicker { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+  .sidebar-head .title { margin-top: 6px; font: 600 18px/1.4 var(--sans); }
+  .toc { flex: 1; overflow-y: auto; padding: 24px 0; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc a {
+    display: block;
+    padding: 6px 28px;
+    font: 600 15px/1.6 var(--sans);
+    text-decoration: none;
+    color: var(--accent);
+  }
+  .toc a::before { content: "  "; white-space: pre; font-family: var(--mono); }
+  .toc a:hover { background: var(--panel); }
+  .toc a[aria-current="true"] { color: var(--fg); }
+  .toc a[aria-current="true"]::before { content: "> "; }
+  .sidebar-foot {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 12px;
+    padding: 18px 28px;
+    border-top: 1px dashed var(--line);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .sidebar-foot dt { color: var(--fg); font-family: var(--sans); }
+  .sidebar-foot dd { margin: 0; }
+  .toc-toggle { display: none; }
+  .sidebar-resize {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -4px;
+    width: 8px;
+    z-index: 20;
+    cursor: col-resize;
+    touch-action: none;
+    outline: none;
+  }
+  .sidebar-resize::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 3px;
+    width: 2px;
+    transition: background 0.15s;
+  }
+  .sidebar-resize:hover::after,
+  .sidebar-resize:focus-visible::after,
+  .is-resizing .sidebar-resize::after { background: var(--accent); }
+  .is-resizing, .is-resizing * { cursor: col-resize !important; user-select: none !important; }
+
+  main { margin-left: var(--sidebar-w); padding: 72px 48px 160px; }
+  .doc { max-width: var(--wide); margin: 0 auto; }
+  /* Blocks default to a readable line length; only .wide blocks (big tables, grids) span --wide. */
+  .doc p, .doc ul, .doc-head h1, .box, details, table { max-width: var(--measure); }
+  .doc .wide { max-width: none; }
+
+  .doc-head { padding-bottom: 32px; margin-bottom: 56px; border-bottom: 1px dashed var(--line); }
+  .doc-head h1 { margin: 0 0 12px; font: 600 34px/1.35 var(--sans); }
+  .doc-head .meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  section { scroll-margin-top: 24px; margin-bottom: 72px; }
+  h2 {
+    display: flex;
+    gap: 14px;
+    margin: 0 0 20px;
+    font: 600 22px/1.4 var(--sans);
+  }
+  h2 .num { color: var(--accent); font-family: var(--mono); }
+  h3 { margin: 32px 0 8px; font: 600 17px/1.5 var(--sans); }
+  p { margin: 0 0 16px; }
+
+  .box {
+    padding: 24px 28px;
+    margin: 24px 0;
+    border: 1px dashed var(--line);
+  }
+  .box .label {
+    display: block;
+    margin-bottom: 8px;
+    font: 600 12px var(--mono);
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .box p:last-child { margin-bottom: 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px dashed var(--line); }
+  th { font: 600 12px var(--mono); letter-spacing: 0.06em; color: var(--muted); }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  caption { caption-side: top; text-align: left; padding-bottom: 8px; font-size: 13px; color: var(--muted); }
+
+  .scrolly { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 32px 0; }
+  .scrolly .steps { padding: 20vh 0; }
+  .scrolly .step {
+    min-height: 40vh;
+    padding: 20px;
+    margin-bottom: 20vh;
+    border: 1px dashed transparent;
+    opacity: 0.35;
+    transition: opacity 0.3s, border-color 0.3s;
+  }
+  .scrolly .step.is-active { opacity: 1; border-color: var(--line); background: var(--bg); }
+  .scrolly .figure {
+    position: sticky;
+    top: 20vh;
+    align-self: start;
+    padding: 24px;
+    border: 1px dashed var(--line);
+    background: var(--panel);
+    font-family: var(--mono);
+  }
+  .figure ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .figure li {
+    counter-increment: s;
+    font-family: var(--sans);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border: 1px dashed var(--line);
+    color: var(--muted);
+    transition: color 0.3s, background 0.3s;
+  }
+  .figure li::before { content: counter(s, decimal-leading-zero) "  "; font-family: var(--mono); }
+  .figure li.is-active { color: var(--fg); background: var(--bg); border-style: solid; border-color: var(--accent); }
+
+  ul.plain { padding-left: 20px; }
+  ul.plain li { margin-bottom: 6px; }
+  details { margin: 16px 0; border: 1px dashed var(--line); padding: 12px 20px; }
+  summary { cursor: pointer; font: 600 15px var(--sans); }
+
+  @media (max-width: 900px) {
+    .sidebar {
+      position: sticky;
+      inset: 0 auto auto;
+      width: auto;
+      z-index: 10;
+      background: var(--bg);
+      border-right: 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border: 0; }
+    .sidebar-head .kicker { display: none; }
+    .sidebar-head .title { margin: 0; font-size: 16px; }
+    .toc-toggle {
+      display: block;
+      padding: 4px 10px;
+      border: 1px dashed var(--line);
+      background: none;
+      font: 600 13px var(--mono);
+      color: var(--fg);
+    }
+    .toc, .sidebar-foot { display: none; }
+    .sidebar.is-open .toc { display: block; max-height: 60vh; border-top: 1px dashed var(--line); padding: 8px 0; }
+    main { margin-left: 0; padding: 40px 20px 120px; }
+    .scrolly { grid-template-columns: 1fr; }
+    .scrolly .figure { order: -1; position: static; }
+    .sidebar-resize { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+  @media print {
+    .sidebar { display: none; }
+    main { margin: 0; padding: 0; }
+    .scrolly { display: block; }
+    .scrolly .figure { position: static; }
+    .scrolly .step { opacity: 1; min-height: 0; margin-bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-resize" role="separator" aria-orientation="vertical" aria-label="목차 너비 조절" tabindex="0"></div>
+  <div class="sidebar-head">
+    <div>
+      <div class="kicker">REPORT</div>
+      <div class="title">주간 배포 자동화</div>
+    </div>
+    <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc">목차</button>
+  </div>
+  <nav class="toc" id="toc" aria-label="목차"><ol></ol></nav>
+  <dl class="sidebar-foot">
+    <dt>작성</dt><dd>권병준</dd>
+    <dt>갱신</dt><dd>2026-10-19 14:30 KST</dd>
+  </dl>
+</aside>
+
+<main>
+  <article class="doc">
+    <header class="doc-head">
+      <h1>주간 배포 자동화 도입 결과</h1>
+      <div class="meta">2026-10-19 14:30 KST / 대상: 팀장 / 관측 기간 2026-09-01 ~ 2026-10-17</div>
+    </header>
+
+    <section id="conclusion">
+      <h2>결론</h2>
+      <div class="box">
+        <span class="label">CONCLUSION</span>
+        <p>주간 배포를 스크립트 한 번으로 실행하도록 바꿨습니다. 배포 한 번에 걸리는 시간이 <strong>40분에서 12분으로 줄었고</strong>, 사람이 직접 하는 단계는 9개에서 2개가 됐습니다.</p>
+      </div>
+      <p>다음 단계로 승인 절차까지 자동화할지 정해야 합니다. 이번 분기 안에 결정이 필요합니다.</p>
+    </section>
+
+    <section id="evidence">
+      <h2>근거</h2>
+      <p>관측 기간 동안 배포는 이전 방식 6회, 새 방식 7회였습니다.</p>
+      <table>
+        <caption>배포 1회 기준 평균값</caption>
+        <thead>
+          <tr><th>항목</th><th class="num">이전</th><th class="num">이후</th><th class="num">변화</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>배포 소요 시간</td><td class="num">40분</td><td class="num">12분</td><td class="num">-70%</td></tr>
+          <tr><td>직접 실행하는 단계</td><td class="num">9개</td><td class="num">2개</td><td class="num">-7개</td></tr>
+          <tr><td>실패 후 복구 시간</td><td class="num">25분</td><td class="num">5분</td><td class="num">-80%</td></tr>
+        </tbody>
+      </table>
+      <details>
+        <summary>측정 방법</summary>
+        <p>배포 시작 명령부터 상태 확인이 끝날 때까지를 CI 로그 시각으로 계산했습니다.</p>
+      </details>
+    </section>
+
+    <section id="process">
+      <h2>진행 과정</h2>
+      <div class="scrolly wide">
+        <div class="steps">
+          <div class="step" data-step="0">
+            <h3>수동 단계 정리</h3>
+            <p>배포 문서에 흩어진 9개 단계를 실제 실행 순서대로 다시 적었습니다.</p>
+          </div>
+          <div class="step" data-step="1">
+            <h3>스크립트로 묶기</h3>
+            <p>사람의 판단이 필요 없는 7개 단계를 스크립트 하나로 합쳤습니다.</p>
+          </div>
+          <div class="step" data-step="2">
+            <h3>실패 시 되돌리기 추가</h3>
+            <p>중간에 실패하면 직전 버전으로 자동으로 되돌아가게 했습니다.</p>
+          </div>
+        </div>
+        <div class="figure" aria-hidden="true">
+          <ol>
+            <li>단계 정리</li>
+            <li>스크립트화</li>
+            <li>자동 되돌리기</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="risk">
+      <h2>위험과 되돌리기</h2>
+      <p>스크립트가 중간에 멈추면 직전 버전으로 자동 복구됩니다. 스크립트 자체에 문제가 생기면 기존 수동 문서대로 배포할 수 있고, 전환에 10분이면 충분합니다.</p>
+      <p>11월 첫 주 배포 후 결과를 다시 확인합니다.</p>
+    </section>
+
+    <section id="unverified">
+      <h2>확인하지 않은 것</h2>
+      <ul class="plain">
+        <li>긴급 배포(핫픽스) 상황에서의 소요 시간</li>
+        <li>다른 팀 서비스에 적용했을 때의 효과</li>
+      </ul>
+    </section>
+
+    <section id="refs">
+      <h2>참고</h2>
+      <ul class="plain">
+        <li><a href="#">배포 스크립트 저장소</a></li>
+        <li><a href="#">CI 실행 기록</a></li>
+      </ul>
+    </section>
+  </article>
+</main>
+
+<script>
+(() => {
+  const sections = [...document.querySelectorAll('.doc section[id]')];
+  const list = document.querySelector('#toc ol');
+
+  sections.forEach((sec, i) => {
+    const h2 = sec.querySelector('h2');
+    const num = String(i + 1).padStart(2, '0');
+    const title = h2.textContent.trim();
+    h2.insertAdjacentHTML('afterbegin', `<span class="num">${num}</span>`);
+    list.insertAdjacentHTML('beforeend', `<li><a href="#${sec.id}">${title}</a></li>`);
+  });
+
+  const links = new Map([...list.querySelectorAll('a')].map(a => [a.hash.slice(1), a]));
+  const setCurrent = id => links.forEach((a, key) => a.setAttribute('aria-current', key === id));
+
+  // A thin band near the top of the viewport decides the current section, so a short section is not skipped.
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) setCurrent(e.target.id); });
+  }, { rootMargin: '-20% 0px -75% 0px' });
+  sections.forEach(s => spy.observe(s));
+  setCurrent(sections[0].id);
+
+  // Short closing sections never reach the band above, so the page bottom marks the last one.
+  addEventListener('scroll', () => {
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
+      setCurrent(sections[sections.length - 1].id);
+    }
+  }, { passive: true });
+
+  document.querySelectorAll('.scrolly').forEach(block => {
+    const steps = block.querySelectorAll('.step');
+    const marks = block.querySelectorAll('.figure li');
+    const activate = n => {
+      steps.forEach((s, i) => s.classList.toggle('is-active', i === n));
+      marks.forEach((m, i) => m.classList.toggle('is-active', i === n));
+    };
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) activate(Number(e.target.dataset.step)); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    steps.forEach(s => io.observe(s));
+    activate(0);
+  });
+
+  const sidebar = document.getElementById('sidebar');
+  const toggle = sidebar.querySelector('.toc-toggle');
+  toggle.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  list.addEventListener('click', e => {
+    if (e.target.closest('a')) {
+      sidebar.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', false);
+    }
+  });
+})();
+</script>
+<script>
+(() => {
+  const KEY = 'report-sidebar-width';
+  const MIN = 180;
+  const root = document.documentElement;
+  const handle = document.querySelector('.sidebar-resize');
+  if (!handle) return;
+  const panel = handle.parentElement;
+
+  const max = () => Math.round(Math.min(480, innerWidth * 0.5));
+  const clamp = w => Math.round(Math.min(max(), Math.max(MIN, w)));
+  const current = () => Math.round(panel.getBoundingClientRect().width);
+  const sync = () => {
+    handle.setAttribute('aria-valuemax', max());
+    handle.setAttribute('aria-valuenow', current());
+  };
+  // Kept apart from the applied width so a narrow window clamps the view without overwriting the preference.
+  let chosen = null;
+  const apply = w => {
+    root.style.setProperty('--sidebar-w', clamp(w) + 'px');
+    sync();
+  };
+  // localStorage throws in sandboxed or storage-blocked frames; resizing still works for the session.
+  const save = w => { try { localStorage.setItem(KEY, w); } catch (e) {} };
+  const reset = () => {
+    chosen = null;
+    root.style.removeProperty('--sidebar-w');
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    sync();
+  };
+
+  handle.setAttribute('aria-valuemin', MIN);
+  try { chosen = Number(localStorage.getItem(KEY)) || null; } catch (e) {}
+  if (chosen) apply(chosen); else sync();
+
+  addEventListener('resize', () => { if (chosen) apply(chosen); else sync(); });
+
+  handle.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+    const left = panel.getBoundingClientRect().left;
+    const start = current();
+    let width = start;
+    const move = ev => { width = clamp(ev.clientX - left); apply(width); };
+    const end = () => {
+      removeEventListener('pointermove', move);
+      removeEventListener('pointerup', end);
+      removeEventListener('pointercancel', end);
+      root.classList.remove('is-resizing');
+      if (width !== start) { chosen = width; save(width); }
+    };
+    root.classList.add('is-resizing');
+    addEventListener('pointermove', move);
+    addEventListener('pointerup', end);
+    addEventListener('pointercancel', end);
+  });
+
+  handle.addEventListener('dblclick', reset);
+
+  handle.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const step = (e.shiftKey ? 40 : 10) * (e.key === 'ArrowRight' ? 1 : -1);
+    chosen = clamp(current() + step);
+    apply(chosen);
+    save(chosen);
+  });
+})();
+</script>
+</body>
+</html>
