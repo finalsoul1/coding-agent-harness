@@ -14,6 +14,11 @@ import sys
 
 HANGUL = re.compile("[%s-%s]" % (chr(0xAC00), chr(0xD7A3)))
 SKILL = "korean-writing"
+# One-line `node ...` call with the marker at the end. Quoted args may hold Korean, but
+# pipes, redirects, and substitutions are refused so the marker cannot carry prose.
+SEARCH_INPUT = re.compile(
+    r'node(?: +(?:"[^"\n`$]*"|[^\s"|;&<>`$()]+))* +# korean-writing: search-input\s*'
+)
 
 READ_ONLY_TOOLS = {
     "Read", "Grep", "Glob", "Skill", "ToolSearch", "WebSearch", "WebFetch",
@@ -97,6 +102,9 @@ def pre_tool_use(data, entries):
     if tool in READ_ONLY_TOOLS:
         return
     if tool.startswith("mcp__") and not MCP_WRITE.search(tool.split("__", 2)[-1]):
+        return
+    # Search keywords passed to a script are input, not prose a reader sees.
+    if tool == "Bash" and SEARCH_INPUT.fullmatch((data.get("tool_input") or {}).get("command") or ""):
         return
     text = json.dumps(data.get("tool_input") or {}, ensure_ascii=False)
     if not HANGUL.search(text) or skill_loaded(entries):

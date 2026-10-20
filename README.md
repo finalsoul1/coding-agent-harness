@@ -60,7 +60,7 @@ Codex에는 대응하는 hook 기능이 없어 Skill과 전역 지침만 연결�
 { "hooks": { "SessionStart": [ { "hooks": [ { "type": "command", "command": "bash \"$HOME/.claude/hooks/submodule-init.sh\"", "timeout": 180 } ] } ] } }
 ```
 
-`korean-writing-guard.py`는 `KOREAN_WRITING_GUARD=off` 환경변수로 잠시 끌 수 있습니다.
+`korean-writing-guard.py`는 `KOREAN_WRITING_GUARD=off` 환경변수로 잠시 끌 수 있습니다. 한글 검색어를 스크립트에 넘기는 경우처럼 독자가 읽는 글이 아닌 입력은, 한 줄짜리 `node` 명령 끝에 `# korean-writing: search-input` 주석을 붙이면 검사하지 않습니다. 따옴표 밖에 파이프, 리다이렉트, 명령 치환이 있으면 표식이 있어도 검사합니다.
 
 hook은 `jq`와 `python3`가 PATH에 있어야 동작합니다. macOS 15 이상은 `jq`를 기본으로 제공하고, `python3`는 Xcode Command Line Tools나 Homebrew로 설치합니다. 등록한 hook은 새 Claude Code 세션부터 적용됩니다.
 
