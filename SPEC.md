@@ -105,7 +105,6 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - `react-performance` Skill과 Vercel React 규칙 revision 고정
 - `pull-request-writing` Skill
 - `korean-writing` Skill
-- `technical-concept-deep-dive` Skill
 - Claude Code hook 파일 링크와 `settings.json` hook 등록 병합 규칙
 - `korean-writing-guard.py`, `comment-guard.sh`, `memory-index-size.sh`, `worktree-base-refresh.sh`, `mr-review-gate.sh` hook과 선택형 `submodule-init.sh`
 - 표준 `SKILL.md` frontmatter와 Codex UI metadata 검증
