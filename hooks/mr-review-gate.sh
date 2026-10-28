@@ -24,10 +24,18 @@ case "$tool" in
     branch=$(printf '%s' "$input" | jq -r '.tool_input.head // empty') ;;
   Bash)
     cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // ""')
-    printf '%s' "$cmd" | grep -Eq '(glab[[:space:]]+mr|gh[[:space:]]+pr)[[:space:]]+create' || exit 0
+    if ! printf '%s' "$cmd" | grep -Eq '(glab[[:space:]]+mr|gh[[:space:]]+pr)[[:space:]]+create'; then
+      printf '%s' "$cmd" | grep -Eq '(glab[[:space:]]+api|curl)[[:space:]].*merge_requests([?"'"'"'[:space:]]|$)|gh[[:space:]]+api[[:space:]].*/pulls([?"'"'"'[:space:]]|$)' || exit 0
+      method=$(printf '%s' "$cmd" | sed -nE 's/.*(-X|--method|--request)[[:space:]=]*["'"'"']?([A-Za-z]+).*/\2/p' | tr '[:lower:]' '[:upper:]')
+      if [ -z "$method" ]; then
+        printf '%s' "$cmd" | grep -Eq '[[:space:]](-f|-F|--field|--raw-field|--input|-d|--data[a-z-]*|--form)([[:space:]=]|$)' && method=POST
+      fi
+      [ "$method" = POST ] || exit 0
+      branch=$(printf '%s' "$cmd" | sed -nE 's/.*source_branch[="'"'"':[:space:]]+([^"'"'"'[:space:],}&]+).*/\1/p')
+    fi
     printf '%s' "$cmd" | grep -Eq '(^|[[:space:]])--?h(elp)?([[:space:]]|$)' && exit 0
     # payload 의 cwd 는 명령 실행 전 위치라 "cd <워크트리> && glab mr create" 를 놓친다.
-    pre=$(printf '%s' "$cmd" | sed -E 's/(glab[[:space:]]+mr|gh[[:space:]]+pr)[[:space:]]+create.*//')
+    pre=$(printf '%s' "$cmd" | sed -E 's/(glab|gh|curl)[[:space:]].*//')
     d=$(printf '%s' "$pre" | sed -nE 's/^(.*[;&|[:space:]])?cd[[:space:]]+("[^"]+"|'"'"'[^'"'"']+'"'"'|[^[:space:];&|]+).*/\2/p' | tr -d "\"'")
     case "$d" in
       '') ;;
