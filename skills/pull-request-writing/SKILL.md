@@ -55,6 +55,7 @@ Template이 없으면 다음 항목에서 필요한 것만 선택한다.
 - 동작이나 interface가 바뀌면 호환성, migration, rollback 주의를 필요한 만큼 포함한다.
 - UI 변경은 가능하면 같은 viewport의 Before/After와 관찰할 차이를 포함한다.
 - 관련 issue가 확인되면 실제 reference와 `Closes` 같은 의도된 keyword만 사용한다.
+- 검증 결과에는 성공으로 판단한 값을 단위까지 적는다(예: `42 passed`, bundle 312KB에서 298KB). "통과"만 쓰면 reviewer가 같은 명령을 실행했을 때 결과를 비교할 기준이 없다.
 - 검증하지 못한 경우 `미실행`과 이유를 명시한다.
 
 작은 PR에는 짧은 문단과 검증 항목만으로 충분하다. 빈 section, 의미 없는 checkbox, diff의 파일 목록 복사, 개발 과정의 시간순 기록은 넣지 않는다.
