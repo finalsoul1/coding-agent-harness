@@ -192,6 +192,33 @@
       "expectedBehavior": [
         "결과물을 HTML 문서로 남기는 경우에만 발동하고, 별도 내용 규칙이 있으면 함께 적용한다."
       ]
+    },
+    {
+      "id": "gestalt-ui-design-required",
+      "skill": "gestalt-ui-design",
+      "query": "사이드 프로젝트용 회원 정보 수정 화면을 HTML로 만들어줘. 시안은 없어.",
+      "expectedActivation": "required",
+      "expectedBehavior": [
+        "그룹 간격, 액션 위계, 딤 범위 규칙을 적용하고 브라우저 스크린샷으로 확인한다."
+      ]
+    },
+    {
+      "id": "gestalt-ui-design-forbidden",
+      "skill": "gestalt-ui-design",
+      "query": "이 피그마 시안대로 결제 화면 구현해줘.",
+      "expectedActivation": "forbidden",
+      "expectedBehavior": [
+        "시안과 디자인 시스템을 따라 구현하는 작업에는 발동하지 않는다."
+      ]
+    },
+    {
+      "id": "gestalt-ui-design-conditional",
+      "skill": "gestalt-ui-design",
+      "query": "이 화면 디자인 리뷰해줘.",
+      "expectedActivation": "conditional",
+      "expectedBehavior": [
+        "파일을 고치지 않고 다른 리뷰 의견 뒤에 「게슈탈트 제안」 섹션만 덧붙인다."
+      ]
     }
   ]
 }
