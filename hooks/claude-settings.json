@@ -52,12 +52,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/comment-guard.sh\"",
-            "timeout": 15,
-            "statusMessage": "주석 재검토 확인"
-          },
-          {
-            "type": "command",
             "command": "bash \"$HOME/.claude/hooks/memory-index-size.sh\"",
             "timeout": 10,
             "statusMessage": "메모리 인덱스 크기 확인"
