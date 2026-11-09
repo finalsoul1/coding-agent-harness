@@ -50,6 +50,7 @@ Codex에는 대응하는 hook 기능이 없어 Skill과 전역 지침만 연결�
 | `korean-writing-guard.py` | PreToolUse · Stop · UserPromptSubmit | 한글이 든 출력(파일, 명령, 쓰기 계열 MCP, 질문, 채팅 답변) 전에 `korean-writing` Skill을 거치게 한다. 마지막 압축 이후 한 번 불렀으면 통과하고, 매 턴 한 줄 알림으로 다시 점검하게 한다. |
 | `memory-index-size.sh` | PostToolUse(Edit\|Write) | `~/.agent-memory/MEMORY.md` 항목이 150개를 넘으면 인덱스 계층화를 안내한다([MEMORY.md](./MEMORY.md)). |
 | `worktree-base-refresh.sh` | PreToolUse(Bash · EnterWorktree) | 워크트리를 만들기 직전에 `origin/<base>`를 fetch한다. base는 `CLAUDE_BASE_BRANCH`, `git config claude.baseBranch`, `origin/HEAD` 순으로 정한다. |
+| `worktree-location-guard.py` | PreToolUse(Bash) | `git worktree add`의 경로가 메인 checkout의 `.claude/worktrees/` 밖이면 명령을 거절하고 올바른 경로를 알려 준다. 여러 저장소를 담은 부모 디렉터리에서 띄운 세션이 형제 폴더에 워크트리를 만드는 것을 막는다. `WORKTREE_LOCATION_GUARD=off`로 끈다. |
 | `mr-review-gate.sh` | PreToolUse(Bash · GitLab/GitHub MR·PR 생성 MCP) | `glab mr create`·`gh pr create`나 MR/PR 생성 MCP 호출 전에 리뷰 서브에이전트를 거치게 한다. 통과 기록은 `<git-dir>/agent-review/<branch>`에 브랜치 단위로 남긴다. 저장소에 `.claude/skills/code-review`가 있으면 그 기준으로 리뷰한다. diff 의 주석도 "왜만 남긴다" 규칙으로 함께 본다. |
 | `submodule-init.sh` | SessionStart (선택) | 새 워크트리에서 비어 있는 서브모듈을 받는다. |
 

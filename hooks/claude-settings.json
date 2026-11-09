@@ -44,6 +44,17 @@
             "statusMessage": "MR 전 리뷰 확인"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/worktree-location-guard.py\"",
+            "timeout": 10,
+            "statusMessage": "워크트리 경로 확인"
+          }
+        ]
       }
     ],
     "PostToolUse": [
