@@ -11,7 +11,8 @@ Claude Code와 Codex에서 같은 개인용 개발 지침을 사용한다. 운�
 - `instructions/global.md`를 전역 지침 원본으로 사용한다.
 - `skills/<name>/SKILL.md` 구조를 설치 대상 명세로 사용한다.
 - `hooks/` 아래 스크립트를 Claude Code hook 설치 대상으로 사용하고, 등록 내용은 `hooks/claude-settings.json` 하나에 둔다.
-- 에이전트 설정 파일 중 이 저장소가 쓰는 것은 hook 등록 항목뿐이다. 나머지 설정은 사용자 자산이다.
+- `output-styles/` 아래 Markdown 파일을 Claude Code output style 설치 대상으로 사용한다.
+- 에이전트 설정 파일 중 이 저장소가 쓰는 것은 hook 등록 항목뿐이다. 나머지 설정은 사용자 자산이다. 어떤 output style을 쓸지 고르는 `outputStyle` 값도 사용자 설정이다.
 - 설치, push, pull, 제거는 `OPERATIONS.md`의 규칙을 따른다.
 - 기존 사용자 파일은 사용자 자산으로 취급한다.
 - 충돌은 임의로 해결하지 않고 사용자에게 선택을 요청한다.
@@ -39,6 +40,8 @@ coding-agent-harness/
 ├─ hooks/
 │  ├─ claude-settings.json
 │  └─ <hook-file>
+├─ output-styles/
+│  └─ <style-file>.md
 ├─ evals/
 │  └─ skills.json
 └─ vendor/
@@ -55,6 +58,7 @@ coding-agent-harness/
 | Codex Skill | `~/.agents/skills/<name>` | `<repo>/skills/<name>` |
 | Claude Code Hook | `~/.claude/hooks/<file>` | `<repo>/hooks/<file>` |
 | Claude Code Hook 등록 | `~/.claude/settings.json`의 `hooks` | `<repo>/hooks/claude-settings.json` (병합) |
+| Claude Code Output style | `~/.claude/output-styles/<file>` | `<repo>/output-styles/<file>` |
 
 `<repo>`는 AI 에이전트가 현재 저장소의 절대 경로로 확인한다. 사용자 이름이나 고정된 홈 경로를 문서 또는 원본 지침에 기록하지 않는다.
 
@@ -63,6 +67,8 @@ Skill은 `skills/`의 바로 아래 디렉터리 중 안전한 이름과 읽을 
 Hook은 `hooks/` 바로 아래의 일반 파일 중 `claude-settings.json`을 뺀 항목을 자동 발견한다. 디렉터리 단위가 아니라 파일 단위로 링크한다. `~/.claude/hooks/`에는 이 저장소가 소유하지 않는 사용자 hook이 함께 있을 수 있기 때문이다.
 
 `settings.json`의 hook 항목은 command가 `$HOME/.claude/hooks/<file>`이고 그 경로가 이 저장소의 hook을 가리키는 링크일 때만 이 저장소 소유로 본다. 병합은 사용자 동의를 받은 뒤에만 하고 다른 항목은 건드리지 않는다. Codex에는 대응하는 hook 기능이 없어 설치 대상이 아니다.
+
+Output style은 `output-styles/` 바로 아래의 `.md` 일반 파일을 자동 발견하고, hook과 같은 이유로 파일 단위로 링크한다. 링크만 만들고 `outputStyle` 값은 바꾸지 않는다. Codex에는 대응하는 기능이 없어 설치 대상이 아니다.
 
 Add-on은 설치 대상이 아니라 `ADDONS.md`의 선택 목록으로 관리한다. 이 저장소는 add-on별 설치법이나 원본 파일을 복제하지 않는다.
 
@@ -83,6 +89,7 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - 두 전역 지침 경로가 같은 `instructions/global.md`를 가리킨다.
 - 발견된 Skill이 Claude Code와 Codex의 Skill 경로에 같은 이름으로 연결된다.
 - 발견된 hook 파일이 `~/.claude/hooks/`에 같은 이름으로 연결되고, `claude-settings.json`의 항목이 `~/.claude/settings.json`에 한 번씩만 들어 있다.
+- 발견된 output style 파일이 `~/.claude/output-styles/`에 같은 이름으로 연결된다.
 - 반복 설치해도 추가 변경이나 백업이 생기지 않는다.
 - 다른 파일이나 링크가 있으면 사용자 선택 전에는 변경하지 않는다.
 - 백업 이름이 충돌하지 않고 원본 내용이 보존된다.
@@ -106,6 +113,7 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - `pull-request-writing` Skill
 - `korean-writing` Skill
 - Claude Code hook 파일 링크와 `settings.json` hook 등록 병합 규칙
+- Claude Code output style 파일 링크와 `concise-korean.md` style
 - `korean-writing-guard.py`, `memory-index-size.sh`, `worktree-base-refresh.sh`, `mr-review-gate.sh` hook과 선택형 `submodule-init.sh`
 - 표준 `SKILL.md` frontmatter와 Codex UI metadata 검증
 - Skill별 발동·비발동·경계 eval 사례

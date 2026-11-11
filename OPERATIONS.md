@@ -24,6 +24,8 @@
 
 ~/.claude/hooks/<file>  -> <repo>/hooks/<file>
 ~/.claude/settings.json 의 hooks <- <repo>/hooks/claude-settings.json (병합)
+
+~/.claude/output-styles/<file> -> <repo>/output-styles/<file>
 ```
 
 Skill은 `<repo>/skills/` 바로 아래의 디렉터리 중 다음 조건을 모두 만족할 때 발견한다.
@@ -40,6 +42,11 @@ Hook은 `<repo>/hooks/` 바로 아래의 항목 중 다음 조건을 모두 만�
 - 심볼릭 링크가 아닌 읽을 수 있는 일반 파일이다.
 
 `claude-settings.json`은 hook 파일이 아니라 등록 내용이다. 여기 없는 hook(예: `submodule-init.sh`)은 링크만 하고 등록하지 않는다.
+
+Output style은 `<repo>/output-styles/` 바로 아래의 항목 중 다음 조건을 모두 만족할 때 발견한다.
+
+- 이름이 `[a-z0-9][a-z0-9-]*\.md` 형식이다.
+- 심볼릭 링크가 아닌 읽을 수 있는 일반 파일이다.
 
 ## 설치
 
@@ -59,6 +66,8 @@ Hook은 `<repo>/hooks/` 바로 아래의 항목 중 다음 조건을 모두 만�
 
 Hook 파일 링크도 같은 규칙으로 처리한다. `~/.claude/hooks/`는 디렉터리째 링크하지 않는다. 이 저장소가 소유하지 않는 사용자 hook이 같은 디렉터리에 있을 수 있다.
 
+Output style 파일 링크도 같은 규칙으로 처리하고, 같은 이유로 `~/.claude/output-styles/`를 디렉터리째 링크하지 않는다. `settings.json`의 `outputStyle` 값은 사용자 설정이므로 바꾸지 않는다. Claude Code는 style 파일을 시작할 때 읽으므로 새 링크는 다시 시작한 뒤에 반영된다고 알린다.
+
 Hook 등록은 링크가 모두 끝난 뒤에 한다. 등록 전에 `jq`와 `python3`가 PATH에 있는지 확인하고, 없으면 등록을 보류하고 사용자에게 알린다. 실행 파일이 없으면 hook이 도구를 호출할 때마다 오류를 낸다.
 
 1. `~/.claude/settings.json`을 디스크에서 다시 읽는다. 다른 프로그램이 세션 중에 이 파일을 고칠 수 있다. 파일이 없으면 사용자 동의를 받아 `claude-settings.json` 내용으로 새로 만들고 5번으로 간다.
@@ -67,13 +76,14 @@ Hook 등록은 링크가 모두 끝난 뒤에 한다. 등록 전에 `jq`와 `pyt
 4. 기존 배열 뒤에 추가하고 다른 키와 항목은 그대로 둔다. JSON이 깨지면 settings 전체가 무시되므로 쓰기 전에 문법을 확인한다.
 5. 다시 읽어 항목이 한 번씩만 있는지 확인한다.
 
-설치 후 전역 지침, 모든 Skill과 hook 링크의 실제 대상과 원본을 읽을 수 있는지 확인한다. 같은 설치를 반복했을 때 변경이 없어야 한다.
+설치 후 전역 지침, 모든 Skill, hook, output style 링크의 실제 대상과 원본을 읽을 수 있는지 확인한다. 같은 설치를 반복했을 때 변경이 없어야 한다.
 
 다음 조건을 모두 만족하는 링크만 이 저장소가 소유한 것으로 판단한다.
 
 - 전역 지침 경로의 링크가 `<repo>/instructions/` 아래를 가리킨다.
 - Skill target 경로의 링크가 정확히 `<repo>/skills/<name>`을 가리킨다.
 - Hook target 경로의 링크가 정확히 `<repo>/hooks/<file>`을 가리킨다.
+- Output style target 경로의 링크가 정확히 `<repo>/output-styles/<file>`을 가리킨다.
 - `settings.json`의 hook 항목은 command가 `$HOME/.claude/hooks/<file>`이고 그 경로가 이 저장소 소유 링크일 때만 소유로 본다.
 
 문자열 경로만 비슷하거나 다른 저장소를 가리키는 링크는 소유하지 않은 것으로 처리한다.
@@ -104,8 +114,8 @@ Push는 사용자가 명시적으로 요청했을 때만 수행한다.
 2. tracked, untracked, staged 변경을 모두 확인한다.
 3. 작업 트리가 깨끗할 때만 `git pull --ff-only`를 실행한다.
 4. 완료 후 새 커밋과 작업 트리 상태를 확인한다.
-5. pull 전후의 발견 결과를 비교해 추가된 Skill과 hook을 연결하고, 저장소가 소유한 변경된 링크를 갱신한다.
-6. 삭제된 Skill이나 hook의 target이 삭제 전 source를 가리키는 소유 링크일 때만 해당 링크를 제거한다.
+5. pull 전후의 발견 결과를 비교해 추가된 Skill, hook, output style을 연결하고, 저장소가 소유한 변경된 링크를 갱신한다.
+6. 삭제된 Skill, hook, output style의 target이 삭제 전 source를 가리키는 소유 링크일 때만 해당 링크를 제거한다.
 7. `claude-settings.json`이 바뀌었으면 설치의 hook 등록 절차를 다시 밟는다. 삭제된 항목은 소유 항목일 때만 사용자 동의를 받아 제거한다.
 8. 모든 설치 경로를 다시 확인한다.
 
@@ -125,6 +135,7 @@ Push는 사용자가 명시적으로 요청했을 때만 수행한다.
 - 현재 저장소의 `instructions/` 아래를 가리키는 심볼릭 링크만 제거한다.
 - 각 Skill target에서 정확히 현재 저장소의 `skills/<name>`을 가리키는 심볼릭 링크만 제거한다.
 - `settings.json`에서 이 저장소 소유 hook 항목을 먼저 제거하고, 그다음 `hooks/<file>`을 가리키는 링크를 제거한다. 순서를 바꾸면 등록만 남은 hook이 없는 파일을 실행하며 매번 오류를 낸다.
+- 각 output style target에서 정확히 현재 저장소의 `output-styles/<file>`을 가리키는 심볼릭 링크만 제거한다. 제거한 style의 이름이 `outputStyle`에 설정돼 있으면 Claude Code가 Default style로 돌아가므로 사용자에게 알린다.
 - 일반 파일, 디렉터리, 다른 저장소의 링크, 백업은 제거하지 않는다.
 - 링크 대상 원본과 저장소는 제거하지 않는다.
 - 상위 디렉터리는 비어 있어도 제거하지 않는다.
@@ -164,7 +175,7 @@ Push는 사용자가 명시적으로 요청했을 때만 수행한다.
 
 - 수행한 작업과 변경된 경로
 - 생성한 백업의 전체 경로
-- 전역 지침, Skill과 hook 링크의 현재 대상
+- 전역 지침, Skill, hook, output style 링크의 현재 대상
 - 추가하거나 제거한 hook 등록 항목
 - 발견, 설치, 제거, 건너뛴 Skill 이름
 - 최초 설치라면 제시한 add-on과 사용자 선택, 수행 결과

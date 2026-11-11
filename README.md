@@ -22,6 +22,8 @@ coding-agent-harness/
 ├─ hooks/
 │  ├─ claude-settings.json
 │  └─ <hook-file>
+├─ output-styles/
+│  └─ <style-file>.md
 ├─ evals/
 │  └─ skills.json
 └─ vendor/
@@ -32,6 +34,8 @@ coding-agent-harness/
 
 `hooks/`에는 Claude Code hook 스크립트와, 그 스크립트를 등록하는 `settings.json` 조각인 `claude-settings.json`이 있습니다. 스크립트는 파일 단위로 링크하고, 조각은 사용자 동의를 받아 `~/.claude/settings.json`에 병합합니다.
 
+`output-styles/`에는 Claude Code output style 파일이 있습니다. hook처럼 파일 단위로 링크하며, 어떤 style을 쓸지는 사용자가 `outputStyle`로 고릅니다([권장 설정](#권장-설정-설치-대상-아님)).
+
 | 에이전트 | 설치 경로 | 링크 대상 |
 | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` | `instructions/global.md` |
@@ -40,8 +44,9 @@ coding-agent-harness/
 | Codex Skill | `~/.agents/skills/<name>` | `skills/<name>` |
 | Claude Code Hook | `~/.claude/hooks/<file>` | `hooks/<file>` |
 | Claude Code Hook 등록 | `~/.claude/settings.json`의 `hooks` | `hooks/claude-settings.json` (병합) |
+| Claude Code Output style | `~/.claude/output-styles/<file>` | `output-styles/<file>` |
 
-Codex에는 대응하는 hook 기능이 없어 Skill과 전역 지침만 연결됩니다.
+Codex에는 대응하는 hook과 output style 기능이 없어 Skill과 전역 지침만 연결됩니다.
 
 ## Hook
 
@@ -112,6 +117,7 @@ AI 에이전트는 설치 후 다음 조건을 확인하고 실제 경로를 출
 - 두 링크의 원본 파일을 읽을 수 있다.
 - 발견된 모든 Skill이 Claude Code와 Codex의 Skill 경로에 연결된다.
 - 발견된 모든 hook 파일이 `~/.claude/hooks/`에 연결되고, `claude-settings.json`의 항목이 `~/.claude/settings.json`에 들어 있다.
+- 발견된 모든 output style 파일이 `~/.claude/output-styles/`에 연결된다.
 - 저장소에 의도하지 않은 로컬 변경이 없다.
 
 직접 확인하려면 다음 명령을 사용할 수 있습니다.
@@ -121,21 +127,22 @@ readlink ~/.claude/CLAUDE.md
 readlink ~/.codex/AGENTS.md
 find skills -mindepth 2 -maxdepth 2 -name SKILL.md -print
 ls -l ~/.claude/hooks
+ls -l ~/.claude/output-styles
 jq '.hooks | keys' ~/.claude/settings.json
 git -C ~/Desktop/Projects/coding-agent-harness status --short --branch
 ```
 
 ## 권장 설정 (설치 대상 아님)
 
-이 저장소는 hook 등록 항목을 빼면 에이전트 설정 파일을 소유하지 않습니다. 아래는 사용자가 직접 적용하는 선택 항목입니다.
+이 저장소는 hook 등록 항목을 빼면 에이전트 설정 파일을 소유하지 않습니다. output style도 파일만 설치하고 선택은 하지 않습니다. 아래는 사용자가 직접 적용하는 선택 항목입니다.
 
 | 에이전트 | 설정 | 값 | 이유 |
 | --- | --- | --- | --- |
-| Claude Code | `~/.claude/settings.json`의 `outputStyle` | `Concise` | 결론부터, 서론·재요약 없이 답하게 합니다. `instructions/global.md`의 분량 규칙과 같은 방향이며 충돌하지 않습니다. |
+| Claude Code | `~/.claude/settings.json`의 `outputStyle` | `Concise Korean` | `output-styles/concise-korean.md`입니다. 기본 제공 Concise 지침(결론부터, 서론·재요약 없이)을 한국어로 옮기고 한국어 답변 문체 규칙을 더했습니다. `keep-coding-instructions: true`로 Claude Code의 기본 코딩 지침을 유지합니다. |
 
-`/config outputStyle=Concise`로도 설정할 수 있고, 이때 Claude Code가 프로젝트의 `.claude/settings.local.json`에 기록합니다. 전역으로 두려면 `~/.claude/settings.json`에 직접 적습니다. 자세한 내용은 [Output styles](https://code.claude.com/docs/en/output-styles) 문서를 참고합니다.
+값은 대소문자를 구분합니다. 이름이 정확히 맞지 않으면 Default style이 적용됩니다. `/config`의 Output style 메뉴로도 고를 수 있지만, 이때 Claude Code는 프로젝트의 `.claude/settings.local.json`에 기록합니다. 전역으로 두려면 `~/.claude/settings.json`에 직접 적습니다. style 파일을 새로 설치하거나 고친 뒤에는 Claude Code를 다시 시작해야 반영됩니다. 자세한 내용은 [Output styles](https://code.claude.com/docs/en/output-styles) 문서를 참고합니다.
 
-Codex에는 대응 기능이 없으므로 분량 규칙은 `instructions/global.md`가 단독으로 담당합니다. 이 설정이 없어도 지침은 그대로 동작합니다.
+Codex에는 대응 기능이 없으므로 분량·문체 규칙은 `instructions/global.md`가 단독으로 담당합니다. 이 설정이 없어도 지침은 그대로 동작합니다.
 
 공통 지침은 이미 열린 대화에 소급 적용되지 않을 수 있습니다. 설치 후 새 Codex 작업 또는 Claude Code 세션에서 확인합니다.
 
