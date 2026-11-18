@@ -12,7 +12,8 @@ Claude Code와 Codex에서 같은 개인용 개발 지침을 사용한다. 운�
 - `skills/<name>/SKILL.md` 구조를 설치 대상 명세로 사용한다.
 - `hooks/` 아래 스크립트를 Claude Code hook 설치 대상으로 사용하고, 등록 내용은 `hooks/claude-settings.json` 하나에 둔다.
 - `output-styles/` 아래 Markdown 파일을 Claude Code output style 설치 대상으로 사용한다.
-- 에이전트 설정 파일 중 이 저장소가 쓰는 것은 hook 등록 항목뿐이다. 나머지 설정은 사용자 자산이다. 어떤 output style을 쓸지 고르는 `outputStyle` 값도 사용자 설정이다.
+- `mcp/servers.json`에 원격 MCP 서버의 이름과 주소만 두고, Claude Code(사용자 범위)와 Codex에 등록한다. 인증 비밀값은 저장소에 두지 않고 각 서버의 OAuth 로그인으로 처리한다.
+- 에이전트 설정 파일 중 이 저장소가 쓰는 것은 hook 등록 항목과 `mcp/servers.json`의 MCP 등록뿐이다. 나머지 설정은 사용자 자산이다. 어떤 output style을 쓸지 고르는 `outputStyle` 값도 사용자 설정이다.
 - 설치, push, pull, 제거는 `OPERATIONS.md`의 규칙을 따른다.
 - 기존 사용자 파일은 사용자 자산으로 취급한다.
 - 충돌은 임의로 해결하지 않고 사용자에게 선택을 요청한다.
@@ -42,6 +43,8 @@ coding-agent-harness/
 │  └─ <hook-file>
 ├─ output-styles/
 │  └─ <style-file>.md
+├─ mcp/
+│  └─ servers.json
 ├─ evals/
 │  └─ skills.json
 └─ vendor/
@@ -58,6 +61,8 @@ coding-agent-harness/
 | Codex Skill | `~/.agents/skills/<name>` | `<repo>/skills/<name>` |
 | Claude Code Hook | `~/.claude/hooks/<file>` | `<repo>/hooks/<file>` |
 | Claude Code Hook 등록 | `~/.claude/settings.json`의 `hooks` | `<repo>/hooks/claude-settings.json` (병합) |
+| Claude Code MCP | 사용자 범위 MCP 등록 (`claude mcp add --scope user`) | `<repo>/mcp/servers.json` |
+| Codex MCP | `~/.codex/config.toml`의 `mcp_servers` (`codex mcp add`) | `<repo>/mcp/servers.json` |
 | Claude Code Output style | `~/.claude/output-styles/<file>` | `<repo>/output-styles/<file>` |
 
 `<repo>`는 AI 에이전트가 현재 저장소의 절대 경로로 확인한다. 사용자 이름이나 고정된 홈 경로를 문서 또는 원본 지침에 기록하지 않는다.

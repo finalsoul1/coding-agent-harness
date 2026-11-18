@@ -26,6 +26,9 @@
 ~/.claude/settings.json 의 hooks <- <repo>/hooks/claude-settings.json (병합)
 
 ~/.claude/output-styles/<file> -> <repo>/output-styles/<file>
+
+Claude Code 사용자 범위 MCP 등록 <- <repo>/mcp/servers.json 의 servers.<name>
+Codex MCP 등록(~/.codex/config.toml) <- <repo>/mcp/servers.json 의 servers.<name>
 ```
 
 Skill은 `<repo>/skills/` 바로 아래의 디렉터리 중 다음 조건을 모두 만족할 때 발견한다.
@@ -47,6 +50,8 @@ Output style은 `<repo>/output-styles/` 바로 아래의 항목 중 다음 조�
 
 - 이름이 `[a-z0-9][a-z0-9-]*\.md` 형식이다.
 - 심볼릭 링크가 아닌 읽을 수 있는 일반 파일이다.
+
+원격 MCP 서버는 `<repo>/mcp/servers.json`의 `servers` 아래 항목 하나가 서버 하나다. 이름은 `[a-z0-9][a-z0-9-]*` 형식이고 `url`은 `https://` 주소다. 이 파일에는 주소만 두고 토큰, 헤더, API 키는 넣지 않는다. 인증은 각 서버의 OAuth 로그인으로 하며, 로그인 결과는 Claude Code와 Codex가 각자 보관한다.
 
 ## 설치
 
@@ -76,6 +81,14 @@ Hook 등록은 링크가 모두 끝난 뒤에 한다. 등록 전에 `jq`와 `pyt
 4. 기존 배열 뒤에 추가하고 다른 키와 항목은 그대로 둔다. JSON이 깨지면 settings 전체가 무시되므로 쓰기 전에 문법을 확인한다.
 5. 다시 읽어 항목이 한 번씩만 있는지 확인한다.
 
+원격 MCP 등록은 hook 등록 다음에 한다. 서버마다 Claude Code와 Codex를 각각 확인한다.
+
+1. Claude Code: `claude mcp get <name>`으로 사용자 범위 등록을 읽는다. 없으면 `claude mcp add --transport http --scope user <name> <url>`로 등록한다. 같은 이름이 `type: http`와 같은 `url`로 있으면 변경하지 않는다.
+2. Codex: `~/.codex/config.toml`의 `[mcp_servers.<name>]`을 읽는다. 없으면 `codex mcp add <name> --url <url>`로 등록한다. 같은 `url`만 있고 `command`가 없으면 변경하지 않는다.
+3. 같은 이름이 다른 `url`, `command`(로컬 실행), 정적 헤더나 헤더 helper로 등록돼 있으면 충돌이다. 현재 설정을 보여주고 유지, 교체, 중단 중에서 묻는다. 교체를 고르면 기존 항목을 지우고 새로 등록한다.
+4. 등록 후 두 클라이언트에서 다시 읽어 `url`이 맞는지 확인한다.
+5. 처음 등록한 서버는 사용자에게 로그인 방법을 알린다. Claude Code는 `/mcp`에서 해당 서버의 Authenticate를 고르고, Codex는 `codex mcp login <name>`을 실행한다. 둘 다 브라우저 로그인을 마치면 클라이언트가 토큰을 보관하고 갱신한다. 에이전트가 사용자 대신 로그인하지 않는다.
+
 설치 후 전역 지침, 모든 Skill, hook, output style 링크의 실제 대상과 원본을 읽을 수 있는지 확인한다. 같은 설치를 반복했을 때 변경이 없어야 한다.
 
 다음 조건을 모두 만족하는 링크만 이 저장소가 소유한 것으로 판단한다.
@@ -85,6 +98,7 @@ Hook 등록은 링크가 모두 끝난 뒤에 한다. 등록 전에 `jq`와 `pyt
 - Hook target 경로의 링크가 정확히 `<repo>/hooks/<file>`을 가리킨다.
 - Output style target 경로의 링크가 정확히 `<repo>/output-styles/<file>`을 가리킨다.
 - `settings.json`의 hook 항목은 command가 `$HOME/.claude/hooks/<file>`이고 그 경로가 이 저장소 소유 링크일 때만 소유로 본다.
+- MCP 등록은 이름이 `mcp/servers.json`에 있고 `url`이 그 값과 정확히 같으며 로컬 실행 `command`가 없을 때만 소유로 본다.
 
 문자열 경로만 비슷하거나 다른 저장소를 가리키는 링크는 소유하지 않은 것으로 처리한다.
 
@@ -117,7 +131,8 @@ Push는 사용자가 명시적으로 요청했을 때만 수행한다.
 5. pull 전후의 발견 결과를 비교해 추가된 Skill, hook, output style을 연결하고, 저장소가 소유한 변경된 링크를 갱신한다.
 6. 삭제된 Skill, hook, output style의 target이 삭제 전 source를 가리키는 소유 링크일 때만 해당 링크를 제거한다.
 7. `claude-settings.json`이 바뀌었으면 설치의 hook 등록 절차를 다시 밟는다. 삭제된 항목은 소유 항목일 때만 사용자 동의를 받아 제거한다.
-8. 모든 설치 경로를 다시 확인한다.
+8. `mcp/servers.json`이 바뀌었으면 추가된 서버를 등록하고, `url`이 바뀐 서버는 pull 전 값과 같은 소유 등록일 때만 새 `url`로 바꾼다. 삭제된 서버는 pull 전 값과 같은 소유 등록일 때만 사용자 동의를 받아 제거한다. 새로 등록한 서버는 로그인 방법을 알린다.
+9. 모든 설치 경로와 MCP 등록을 다시 확인한다.
 
 다음 상태에서는 pull 전에 사용자에게 묻는다.
 
@@ -135,6 +150,7 @@ Push는 사용자가 명시적으로 요청했을 때만 수행한다.
 - 현재 저장소의 `instructions/` 아래를 가리키는 심볼릭 링크만 제거한다.
 - 각 Skill target에서 정확히 현재 저장소의 `skills/<name>`을 가리키는 심볼릭 링크만 제거한다.
 - `settings.json`에서 이 저장소 소유 hook 항목을 먼저 제거하고, 그다음 `hooks/<file>`을 가리키는 링크를 제거한다. 순서를 바꾸면 등록만 남은 hook이 없는 파일을 실행하며 매번 오류를 낸다.
+- `mcp/servers.json`의 서버 중 소유 등록만 `claude mcp remove <name> -s user`와 `codex mcp remove <name>`으로 제거한다. 클라이언트가 보관한 로그인 토큰은 함께 정리된다는 보장이 없으므로 남을 수 있다고 알린다.
 - 각 output style target에서 정확히 현재 저장소의 `output-styles/<file>`을 가리키는 심볼릭 링크만 제거한다. 제거한 style의 이름이 `outputStyle`에 설정돼 있으면 Claude Code가 Default style로 돌아가므로 사용자에게 알린다.
 - 일반 파일, 디렉터리, 다른 저장소의 링크, 백업은 제거하지 않는다.
 - 링크 대상 원본과 저장소는 제거하지 않는다.
@@ -177,6 +193,7 @@ Push는 사용자가 명시적으로 요청했을 때만 수행한다.
 - 생성한 백업의 전체 경로
 - 전역 지침, Skill, hook, output style 링크의 현재 대상
 - 추가하거나 제거한 hook 등록 항목
+- 추가, 변경, 제거한 MCP 등록과 로그인이 필요한 서버
 - 발견, 설치, 제거, 건너뛴 Skill 이름
 - 최초 설치라면 제시한 add-on과 사용자 선택, 수행 결과
 - 현재 Git 브랜치와 작업 트리 상태

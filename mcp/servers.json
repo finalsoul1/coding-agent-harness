@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "servers": {
+    "molit-rtms": {
+      "url": "https://molit-rtms-mcp.vercel.app/api/mcp",
+      "description": "국토교통부 실거래가(전월세·매매) 조회. 첫 연결 때 GitHub 로그인",
+      "source": "https://github.com/finalsoul1/molit-rtms-mcp"
+    }
+  }
+}

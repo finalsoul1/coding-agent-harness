@@ -24,6 +24,8 @@ coding-agent-harness/
 │  └─ <hook-file>
 ├─ output-styles/
 │  └─ <style-file>.md
+├─ mcp/
+│  └─ servers.json
 ├─ evals/
 │  └─ skills.json
 └─ vendor/
@@ -45,6 +47,8 @@ coding-agent-harness/
 | Claude Code Hook | `~/.claude/hooks/<file>` | `hooks/<file>` |
 | Claude Code Hook 등록 | `~/.claude/settings.json`의 `hooks` | `hooks/claude-settings.json` (병합) |
 | Claude Code Output style | `~/.claude/output-styles/<file>` | `output-styles/<file>` |
+| Claude Code MCP | 사용자 범위 MCP 등록 | `mcp/servers.json` |
+| Codex MCP | `~/.codex/config.toml`의 `mcp_servers` | `mcp/servers.json` |
 
 Codex에는 대응하는 hook과 output style 기능이 없어 Skill과 전역 지침만 연결됩니다.
 
@@ -68,6 +72,17 @@ Codex에는 대응하는 hook과 output style 기능이 없어 Skill과 전역 �
 `korean-writing-guard.py`는 `KOREAN_WRITING_GUARD=off` 환경변수로 잠시 끌 수 있습니다. 한글 검색어를 스크립트에 넘기는 경우처럼 독자가 읽는 글이 아닌 입력은, 한 줄짜리 `node` 명령 끝에 `# korean-writing: search-input` 주석을 붙이면 검사하지 않습니다. 따옴표 밖에 파이프, 리다이렉트, 명령 치환이 있으면 표식이 있어도 검사합니다.
 
 hook은 `jq`와 `python3`가 PATH에 있어야 동작합니다. macOS 15 이상은 `jq`를 기본으로 제공하고, `python3`는 Xcode Command Line Tools나 Homebrew로 설치합니다. 등록한 hook은 새 Claude Code 세션부터 적용됩니다.
+
+## 원격 MCP 서버
+
+`mcp/servers.json`에 있는 원격 MCP 서버는 설치와 pull 때 Claude Code(사용자 범위)와 Codex에 주소만 등록됩니다. 토큰이나 키는 저장소에도, 등록 내용에도 들어가지 않습니다. 처음 쓸 때 한 번 로그인하면 클라이언트가 토큰을 보관하고 갱신합니다.
+
+| 이름 | 하는 일 | 로그인 |
+| --- | --- | --- |
+| `molit-rtms` | 국토교통부 실거래가(아파트·오피스텔·연립다세대·단독다가구 전월세, 아파트·오피스텔 매매) 조회 | GitHub (`finalsoul1`만 허용) |
+
+- Claude Code: `/mcp`에서 서버를 고르고 Authenticate를 누릅니다.
+- Codex: `codex mcp login molit-rtms`를 실행합니다.
 
 ## AI 에이전트에게 요청하기
 
@@ -118,6 +133,7 @@ AI 에이전트는 설치 후 다음 조건을 확인하고 실제 경로를 출
 - 발견된 모든 Skill이 Claude Code와 Codex의 Skill 경로에 연결된다.
 - 발견된 모든 hook 파일이 `~/.claude/hooks/`에 연결되고, `claude-settings.json`의 항목이 `~/.claude/settings.json`에 들어 있다.
 - 발견된 모든 output style 파일이 `~/.claude/output-styles/`에 연결된다.
+- `mcp/servers.json`의 모든 서버가 Claude Code와 Codex에 같은 주소로 등록돼 있다.
 - 저장소에 의도하지 않은 로컬 변경이 없다.
 
 직접 확인하려면 다음 명령을 사용할 수 있습니다.
@@ -129,6 +145,8 @@ find skills -mindepth 2 -maxdepth 2 -name SKILL.md -print
 ls -l ~/.claude/hooks
 ls -l ~/.claude/output-styles
 jq '.hooks | keys' ~/.claude/settings.json
+claude mcp list
+codex mcp list
 git -C ~/Desktop/Projects/coding-agent-harness status --short --branch
 ```
 
