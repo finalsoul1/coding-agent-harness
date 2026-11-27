@@ -30,7 +30,7 @@ case "$tool" in
       printf '%s' "$cmd" | grep -Eq '(glab[[:space:]]+api|curl)[[:space:]].*merge_requests([?"'"'"'[:space:]]|$)|gh[[:space:]]+api[[:space:]].*/pulls([?"'"'"'[:space:]]|$)' || exit 0
       method=$(printf '%s' "$cmd" | sed -nE 's/.*(-X|--method|--request)[[:space:]=]*["'"'"']?([A-Za-z]+).*/\2/p' | tr '[:lower:]' '[:upper:]')
       if [ -z "$method" ]; then
-        printf '%s' "$cmd" | grep -Eq '[[:space:]](-f|-F|--field|--raw-field|--input|-d|--data[a-z-]*|--form)([[:space:]=]|$)' && method=POST
+        printf '%s' "$cmd" | grep -Eq '[[:space:]](-f|-F|--field|--raw-field|--input|-d|--data[a-z-]*|--form|--json)([[:space:]=]|$)' && method=POST
       fi
       [ "$method" = POST ] || exit 0
       branch=$(printf '%s' "$cmd" | sed -nE 's/.*source_branch[="'"'"':[:space:]]+([^"'"'"'[:space:],}&]+).*/\1/p')
