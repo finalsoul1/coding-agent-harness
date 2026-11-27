@@ -61,6 +61,7 @@ Codex에는 대응하는 hook과 output style 기능이 없어 Skill과 전역 �
 | `worktree-base-refresh.sh` | PreToolUse(Bash · EnterWorktree) | 워크트리를 만들기 직전에 `origin/<base>`를 fetch한다. base는 `CLAUDE_BASE_BRANCH`, `git config claude.baseBranch`, `origin/HEAD` 순으로 정한다. |
 | `worktree-location-guard.py` | PreToolUse(Bash) | `git worktree add`의 경로가 메인 checkout의 `.claude/worktrees/` 밖이면 명령을 거절하고 올바른 경로를 알려 준다. 여러 저장소를 담은 부모 디렉터리에서 띄운 세션이 형제 폴더에 워크트리를 만드는 것을 막는다. `WORKTREE_LOCATION_GUARD=off`로 끈다. |
 | `mr-review-gate.sh` | PreToolUse(Bash · GitLab/GitHub MR·PR 생성 MCP) | `glab mr create`·`gh pr create`나 MR/PR 생성 MCP 호출 전에 리뷰 서브에이전트를 거치게 한다. 통과 기록은 `<git-dir>/agent-review/<branch>`에 브랜치 단위로 남긴다. 저장소에 `.claude/skills/code-review`가 있으면 그 기준으로 리뷰한다. diff 의 주석도 "왜만 남긴다" 규칙으로 함께 본다. |
+| `mr-post-create.sh` | PostToolUse(Bash · GitLab/GitHub MR·PR 생성 MCP) | MR/PR 생성이 성공하면 리뷰 기록이 없을 때는 전체 리뷰를, 있을 때는 주석 재검토를 지시한다. 이어서 Paseo `subscribe_change_request`로 MR을 구독하게 한다. 새 리뷰 코멘트는 검증한 뒤 고쳐서 커밋·push한다. 봇 리뷰에는 답글을 달고 resolve하고, 사람 리뷰는 답글을 초안으로만 보여 준다. Paseo 밖 세션에서는 구독 단계를 건너뛴다. |
 | `submodule-init.sh` | SessionStart (선택) | 새 워크트리에서 비어 있는 서브모듈을 받는다. |
 
 `submodule-init.sh`는 세션을 시작할 때마다 네트워크로 서브모듈을 받으므로 `claude-settings.json`에 넣지 않았습니다. 쓰려면 직접 등록합니다.

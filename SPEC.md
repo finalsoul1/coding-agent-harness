@@ -119,7 +119,7 @@ AI 에이전트는 다음 순서를 공통으로 따른다.
 - `korean-writing` Skill
 - Claude Code hook 파일 링크와 `settings.json` hook 등록 병합 규칙
 - Claude Code output style 파일 링크와 `concise-korean.md` style
-- `korean-writing-guard.py`, `memory-index-size.sh`, `worktree-base-refresh.sh`, `mr-review-gate.sh` hook과 선택형 `submodule-init.sh`
+- `korean-writing-guard.py`, `memory-index-size.sh`, `worktree-base-refresh.sh`, `mr-review-gate.sh`, `mr-post-create.sh` hook과 선택형 `submodule-init.sh`
 - 표준 `SKILL.md` frontmatter와 Codex UI metadata 검증
 - Skill별 발동·비발동·경계 eval 사례
 - 선택형 add-on 목록과 최초 설치 선택 규칙

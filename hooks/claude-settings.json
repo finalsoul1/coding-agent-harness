@@ -68,6 +68,17 @@
             "statusMessage": "메모리 인덱스 크기 확인"
           }
         ]
+      },
+      {
+        "matcher": "Bash|mcp__gitlab__create_merge_request|mcp__github__create_pull_request",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/mr-post-create.sh\"",
+            "timeout": 10,
+            "statusMessage": "MR 생성 후 리뷰 절차 확인"
+          }
+        ]
       }
     ],
     "Stop": [
